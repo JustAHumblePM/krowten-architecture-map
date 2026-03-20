@@ -458,6 +458,7 @@ function showPanel(node) {
   let html = `
     <h2>${d.label}</h2>
     <div class="subtitle">${d.id}</div>
+    ${d.description ? `<p style="margin:10px 0 14px;color:#c8d6e5;font-size:13px;line-height:1.5;border-left:3px solid #54a0ff;padding-left:10px;">${d.description}</p>` : ''}
 
     <div class="detail-section">
       <h3>Service Info</h3>
