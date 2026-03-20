@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Krowten Architecture Map</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
 <script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"></script>
 <script src="https://unpkg.com/cose-base@2.2.0/cose-base.js"></script>
@@ -167,6 +168,31 @@
     display: flex; align-items: center; justify-content: center;
   }
 
+  /* ── Login gate ─────────────────────────────────── */
+  #login-gate {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #0f1117; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 24px;
+  }
+  #login-gate.hidden { display: none; }
+  #login-gate h1 { font-size: 24px; color: #f0f6fc; font-weight: 600; }
+  #login-gate p { font-size: 14px; color: #8b949e; max-width: 360px; text-align: center; line-height: 1.5; }
+  #login-error {
+    color: #f85149; font-size: 13px; display: none;
+    background: #2d1216; border: 1px solid #f8514926;
+    border-radius: 6px; padding: 8px 16px; max-width: 360px; text-align: center;
+  }
+  #login-user {
+    font-size: 12px; color: #8b949e; display: flex;
+    align-items: center; gap: 8px;
+  }
+  #login-user img { width: 20px; height: 20px; border-radius: 50%; }
+  #logout-btn {
+    background: none; border: 1px solid #30363d; color: #8b949e;
+    padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+  }
+  #logout-btn:hover { background: #21262d; }
+
   /* ── Stats bar ──────────────────────────────────── */
   #stats {
     position: absolute; bottom: 16px; right: 16px; background: #161b22;
@@ -176,6 +202,29 @@
 </style>
 </head>
 <body>
+
+<!-- ── Login gate ──────────────────────────────────── -->
+<div id="login-gate">
+  <h1>Krowten Architecture Map</h1>
+  <p>Sign in with your Little Dot Studios Google account to view the system diagram.</p>
+  <div id="g_id_onload"
+    data-client_id="732577889448-cnbkisoefb200tcu237547v11d4hukqt.apps.googleusercontent.com"
+    data-callback="handleGoogleLogin"
+    data-auto_prompt="false">
+  </div>
+  <div class="g_id_signin"
+    data-type="standard"
+    data-size="large"
+    data-theme="filled_black"
+    data-text="sign_in_with"
+    data-shape="rectangular"
+    data-logo_alignment="left">
+  </div>
+  <div id="login-error">Access is restricted to @littledotstudios.com accounts.</div>
+</div>
+
+<!-- ── Main app (hidden until authenticated) ───────── -->
+<div id="app" style="display:none">
 
 <div id="topbar">
   <div style="display:flex; align-items: center; gap: 12px;">
@@ -189,6 +238,7 @@
     <button class="btn" onclick="fitGraph()">Fit</button>
     <button class="btn" id="btn-layout" onclick="cycleLayout()">Layout: fCOSE</button>
     <div style="border-left:1px solid #30363d; height:20px; margin:0 4px"></div>
+    <span id="login-user"></span>
     <button class="btn edge-filter active" data-type="cloud_tasks">Tasks</button>
     <button class="btn edge-filter active" data-type="gcs">GCS</button>
     <button class="btn edge-filter active" data-type="firestore">Firestore</button>
@@ -228,7 +278,62 @@
   <div id="panel-content"></div>
 </div>
 
+</div><!-- end #app -->
+
 <script>
+// ── Auth gate ────────────────────────────────────────────
+const ALLOWED_DOMAIN = 'littledotstudios.com';
+const SESSION_KEY = 'krowten_auth';
+
+function decodeJwt(token) {
+  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(base64));
+}
+
+function handleGoogleLogin(response) {
+  const payload = decodeJwt(response.credential);
+  const email = payload.email || '';
+  const domain = email.split('@')[1];
+
+  if (domain !== ALLOWED_DOMAIN) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+
+  // Store session (credential + basic info)
+  const session = { email, name: payload.name, picture: payload.picture, exp: payload.exp };
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  activateApp(session);
+}
+
+function activateApp(session) {
+  document.getElementById('login-gate').classList.add('hidden');
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('login-user').innerHTML =
+    `<img src="${session.picture}" alt=""> ${session.name} <button id="logout-btn" onclick="logout()">Sign out</button>`;
+  loadData();
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+// Check for existing session on page load
+(function checkSession() {
+  const stored = sessionStorage.getItem(SESSION_KEY);
+  if (stored) {
+    const session = JSON.parse(stored);
+    // Check expiry (Google tokens last ~1 hour, but we're just using it as a session marker)
+    if (session.exp * 1000 > Date.now()) {
+      activateApp(session);
+      return;
+    }
+    sessionStorage.removeItem(SESSION_KEY);
+  }
+  // Show login gate (already visible by default)
+})();
+
 // ── Colour maps ──────────────────────────────────────────
 const EDGE_COLOURS = {
   cloud_tasks: '#e67e22',
@@ -251,40 +356,41 @@ const NODE_COLOURS = {
 // ── Load data & init ─────────────────────────────────────
 let cy, graphData, changelogData;
 
-fetch('graph-data.json')
-  .then(r => r.json())
-  .then(data => {
-    graphData = data;
-    initCytoscape(data);
-    updateStats();
-  })
-  .catch(e => {
-    document.getElementById('cy').innerHTML =
-      '<p style="padding:40px;color:#f85149">Failed to load graph-data.json: ' + e.message + '</p>';
-  });
+function loadData() {
+  fetch('graph-data.json')
+    .then(r => r.json())
+    .then(data => {
+      graphData = data;
+      initCytoscape(data);
+      updateStats();
+    })
+    .catch(e => {
+      document.getElementById('cy').innerHTML =
+        '<p style="padding:40px;color:#f85149">Failed to load graph-data.json: ' + e.message + '</p>';
+    });
 
-// Load changelog (optional — may not exist on first scan)
-fetch('changelog.json')
-  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
-  .then(data => {
-    changelogData = data;
-    const btn = document.getElementById('btn-changelog');
-    btn.style.display = 'inline-block';
+  // Load changelog (optional — may not exist on first scan)
+  fetch('changelog.json')
+    .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+    .then(data => {
+      changelogData = data;
+      const btn = document.getElementById('btn-changelog');
+      btn.style.display = 'inline-block';
 
-    // Show badge with change count
-    const totalChanges =
-      (data.services.added?.length || 0) +
-      (data.services.removed?.length || 0) +
-      (data.services.changed?.length || 0) +
-      (data.connections.added?.length || 0) +
-      (data.connections.removed?.length || 0);
+      const totalChanges =
+        (data.services.added?.length || 0) +
+        (data.services.removed?.length || 0) +
+        (data.services.changed?.length || 0) +
+        (data.connections.added?.length || 0) +
+        (data.connections.removed?.length || 0);
 
-    if (totalChanges > 0) {
-      btn.innerHTML = `What Changed <span class="cl-badge">${totalChanges}</span>`;
-    }
-    renderChangelog(data);
-  })
-  .catch(() => { /* No changelog yet — that's fine */ });
+      if (totalChanges > 0) {
+        btn.innerHTML = `What Changed <span class="cl-badge">${totalChanges}</span>`;
+      }
+      renderChangelog(data);
+    })
+    .catch(() => { /* No changelog yet — that's fine */ });
+}
 
 function initCytoscape(data) {
   cy = cytoscape({
