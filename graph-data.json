@@ -1,0 +1,1372 @@
+{
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "lds-baserock-krowten-data-service",
+          "label": "data-service",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 8,
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/",
+              "handler": "root"
+            },
+            {
+              "method": "GET",
+              "path": "/data",
+              "handler": "get_data"
+            },
+            {
+              "method": "GET",
+              "path": "/filter-options",
+              "handler": "get_filter_options"
+            },
+            {
+              "method": "GET",
+              "path": "/info",
+              "handler": "get_view_info"
+            },
+            {
+              "method": "GET",
+              "path": "/query",
+              "handler": "query_data_by_status"
+            },
+            {
+              "method": "POST",
+              "path": "/query",
+              "handler": "query_data"
+            },
+            {
+              "method": "POST",
+              "path": "/validate",
+              "handler": "validate_assets"
+            },
+            {
+              "method": "POST",
+              "path": "/export",
+              "handler": "export_data"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-backend",
+          "label": "backend",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 51,
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/",
+              "handler": "root"
+            },
+            {
+              "method": "POST",
+              "path": "/assets",
+              "handler": "get_assets"
+            },
+            {
+              "method": "GET",
+              "path": "/asset/{asset_id}",
+              "handler": "get_asset"
+            },
+            {
+              "method": "POST",
+              "path": "/asset/add_channel/{asset_id}",
+              "handler": "add_channel_to_asset"
+            },
+            {
+              "method": "POST",
+              "path": "/asset/add_channels_bulk",
+              "handler": "add_channels_to_assets_bulk"
+            },
+            {
+              "method": "DELETE",
+              "path": "/asset/remove_channel/{asset_id}/{channel_id}",
+              "handler": "remove_channel_from_asset"
+            },
+            {
+              "method": "DELETE",
+              "path": "/asset/remove_channel_bulk",
+              "handler": "remove_channel_from_assets_bulk"
+            },
+            {
+              "method": "DELETE",
+              "path": "/asset/delete",
+              "handler": "remove_asset"
+            },
+            {
+              "method": "POST",
+              "path": "/channel/{channel_id}",
+              "handler": "update_channel_config"
+            },
+            {
+              "method": "GET",
+              "path": "/content-owners",
+              "handler": "list_content_owners"
+            },
+            {
+              "method": "GET",
+              "path": "/auth/token",
+              "handler": "generate_dev_token"
+            },
+            {
+              "method": "GET",
+              "path": "/assets",
+              "handler": "list_assets"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/bundle",
+              "handler": "get_bundle"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/info",
+              "handler": "get_asset_info"
+            },
+            {
+              "method": "POST",
+              "path": "/refresh-index",
+              "handler": "refresh_index"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/scoring-status",
+              "handler": "get_scoring_status"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/frames",
+              "handler": "list_frames"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/frames/{filename}",
+              "handler": "get_single_frame"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/scores",
+              "handler": "get_scores"
+            },
+            {
+              "method": "GET",
+              "path": "/recipes",
+              "handler": "list_recipes"
+            },
+            {
+              "method": "GET",
+              "path": "/recipes/{name}",
+              "handler": "get_recipe"
+            },
+            {
+              "method": "POST",
+              "path": "/recipes",
+              "handler": "save_recipe"
+            },
+            {
+              "method": "PUT",
+              "path": "/recipes/{name}/rename",
+              "handler": "rename_recipe"
+            },
+            {
+              "method": "DELETE",
+              "path": "/recipes/{name}",
+              "handler": "delete_recipe"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/recipe",
+              "handler": "resolve_recipe"
+            },
+            {
+              "method": "GET",
+              "path": "/channels",
+              "handler": "list_channels"
+            },
+            {
+              "method": "GET",
+              "path": "/channels/{channel_id}/assets",
+              "handler": "list_channel_assets"
+            },
+            {
+              "method": "PUT",
+              "path": "/channels/{channel_id}/recipe",
+              "handler": "assign_channel_recipe"
+            },
+            {
+              "method": "DELETE",
+              "path": "/channels/{channel_id}/recipe",
+              "handler": "remove_channel_recipe"
+            },
+            {
+              "method": "PUT",
+              "path": "/assets/{doc_id}/channels/{channel_id}/recipe",
+              "handler": "assign_asset_recipe"
+            },
+            {
+              "method": "DELETE",
+              "path": "/assets/{doc_id}/channels/{channel_id}/recipe",
+              "handler": "remove_asset_recipe"
+            },
+            {
+              "method": "GET",
+              "path": "/tags",
+              "handler": "list_tags"
+            },
+            {
+              "method": "POST",
+              "path": "/tags",
+              "handler": "bulk_tag"
+            },
+            {
+              "method": "GET",
+              "path": "/schedule/calendar",
+              "handler": "schedule_data"
+            },
+            {
+              "method": "POST",
+              "path": "/schedule/assets/run",
+              "handler": "trigger_scheduling_job"
+            },
+            {
+              "method": "POST",
+              "path": "/schedule/reschedule",
+              "handler": "reschedule_video"
+            },
+            {
+              "method": "POST",
+              "path": "/schedule/reschedule/bulk",
+              "handler": "reschedule_videos_route"
+            },
+            {
+              "method": "POST",
+              "path": "/sidekick",
+              "handler": "sidekick_save"
+            },
+            {
+              "method": "GET",
+              "path": "/sidekick/{name}",
+              "handler": "sidekick_load"
+            },
+            {
+              "method": "GET",
+              "path": "/sidekick/{name}/preview",
+              "handler": "sidekick_preview"
+            },
+            {
+              "method": "DELETE",
+              "path": "/sidekick/{name}",
+              "handler": "sidekick_delete"
+            },
+            {
+              "method": "GET",
+              "path": "/sidekick/{name}/{file}",
+              "handler": "sidekick_load_file"
+            },
+            {
+              "method": "POST",
+              "path": "/sidekick/bp",
+              "handler": "sidekick_save_blueprint"
+            },
+            {
+              "method": "DELETE",
+              "path": "/sidekick/bp/{folder}/{name}",
+              "handler": "sidekick_delete_blueprint"
+            },
+            {
+              "method": "GET",
+              "path": "/batch",
+              "handler": "list_thumbnails"
+            },
+            {
+              "method": "GET",
+              "path": "/batch-ranked",
+              "handler": "list_thumbnails_ranked"
+            },
+            {
+              "method": "GET",
+              "path": "/batch-unified",
+              "handler": "list_thumbnails_unified"
+            },
+            {
+              "method": "GET",
+              "path": "/single",
+              "handler": "get_thumbnail_uri"
+            },
+            {
+              "method": "POST",
+              "path": "/select",
+              "handler": "select_thumbnail_for_asset"
+            },
+            {
+              "method": "POST",
+              "path": "/revert",
+              "handler": "revert_thumbnail_selection"
+            },
+            {
+              "method": "POST",
+              "path": "/users/add_user",
+              "handler": "add_user"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-channel-selector-service",
+          "label": "channel-selector-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-cloud-run-bucket-processor",
+          "label": "cloud-run-bucket-processor",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-firestore-pubsub-create",
+          "label": "firestore-pubsub-create",
+          "service_type": "cloud_function",
+          "framework": "functions_framework",
+          "deploy_target": null,
+          "primary_language": "yaml",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "diamond"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-firestore-pubsub-update",
+          "label": "firestore-pubsub-update",
+          "service_type": "cloud_function",
+          "framework": "functions_framework",
+          "deploy_target": "cloud-function",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "diamond"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "label": "firestore-pubsub-watcher",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-frame-gen-service",
+          "label": "frame-gen-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-frame-tuner",
+          "label": "frame-tuner",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-frontend",
+          "label": "frontend",
+          "service_type": "frontend",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "javascript",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-healer",
+          "label": "healer",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "yaml",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-iconik-data",
+          "label": "iconik-data",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 3,
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/iconik/assets/gets/{id}",
+              "handler": "get_data_with_id"
+            },
+            {
+              "method": "POST",
+              "path": "/pubsub",
+              "handler": "pubsub_push_handler"
+            },
+            {
+              "method": "POST",
+              "path": "/process-iconik",
+              "handler": "process_video_asset"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-iconik-download-service",
+          "label": "iconik-download-service",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-iconik-jobs",
+          "label": "iconik-jobs",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 1,
+          "routes": [
+            {
+              "method": "POST",
+              "path": "/webhook/iconik/restore",
+              "handler": "iconik_restore_webhook"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-job-executor-service",
+          "label": "job-executor-service",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 23,
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/",
+              "handler": "root"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-frame-generation-job",
+              "handler": "trigger_frame_generation_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-metadata-generation-job",
+              "handler": "trigger_metadata_generation_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-thumbnail-generation-job",
+              "handler": "trigger_thumbnail_generation_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-transcription-generation-job",
+              "handler": "trigger_transcription_generation_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-channel-selector-job",
+              "handler": "trigger_channel_selector_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-iconik-tagger-job",
+              "handler": "trigger_iconik_tagger_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-iconik-restore-job",
+              "handler": "trigger_iconik_restore_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-iconik-download-job",
+              "handler": "trigger_iconik_video_download_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-iconik-download-job-v2",
+              "handler": "trigger_iconik_video_download_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-archive-video-asset-job",
+              "handler": "trigger_archive_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-rightsline-policy-job",
+              "handler": "trigger_rightsline_policy_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-rightsline-usage-policy-job",
+              "handler": "trigger_rightsline_usage_policy_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-video-upload-job",
+              "handler": "trigger_video_upload_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-sftp-metadata-job",
+              "handler": "trigger_sftp_metadata_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-youtube-upload-job",
+              "handler": "trigger_youtube_upload_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-poll-upload-results-job",
+              "handler": "trigger_poll_upload_results_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-sony-veritone-download-job",
+              "handler": "trigger_sony_veritone_download_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-audio-extraction-job",
+              "handler": "trigger_audio_extraction_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-video-analysis-job",
+              "handler": "trigger_video_analysis_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-language-detection-job",
+              "handler": "trigger_language_detection_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-asset-type-change-job",
+              "handler": "trigger_change_job"
+            },
+            {
+              "method": "POST",
+              "path": "/trigger-scheduling-job",
+              "handler": "trigger_scheduling_job"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-master-data-seed",
+          "label": "master-data-seed",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 1,
+          "routes": [
+            {
+              "method": "POST",
+              "path": "/upload-csv",
+              "handler": "upload_csv"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-metadata-service",
+          "label": "metadata-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-playlist-metadata-gen-service",
+          "label": "playlist-metadata-gen-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-policy-generation-job",
+          "label": "policy-generation-job",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-rights-data",
+          "label": "rights-data",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 2,
+          "routes": [
+            {
+              "method": "POST",
+              "path": "/pubsub",
+              "handler": "pubsub_push_handler"
+            },
+            {
+              "method": "POST",
+              "path": "/process-rightsline",
+              "handler": "process_rightsline"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-rightsline-policy-usage-service",
+          "label": "rightsline-policy-usage-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-scheduling-executor-service",
+          "label": "scheduling-executor-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-scheduling-service",
+          "label": "scheduling-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-sftp-delivery-complete-service",
+          "label": "sftp-delivery-complete-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-sftp-jobs",
+          "label": "sftp-jobs",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-sftp-metadata-loader-service",
+          "label": "sftp-metadata-loader-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-sftp-video-uploader-service",
+          "label": "sftp-video-uploader-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-thumb-gen-v2-service",
+          "label": "thumb-gen-v2-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-thumbnail-creation-service",
+          "label": "thumbnail-creation-service",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "unknown",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-transcription-generation-executor",
+          "label": "transcription-generation-executor",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 1,
+          "routes": [
+            {
+              "method": "POST",
+              "path": "/trigger-transcription-generation",
+              "handler": "trigger_transcription_generation"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-transformation",
+          "label": "transformation",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "json",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-ultralytics",
+          "label": "ultralytics",
+          "service_type": "api",
+          "framework": "fastapi",
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 3,
+          "routes": [
+            {
+              "method": "GET",
+              "path": "/",
+              "handler": "root"
+            },
+            {
+              "method": "GET",
+              "path": "/auth/token",
+              "handler": "generate_dev_token"
+            },
+            {
+              "method": "POST",
+              "path": "/ultralytics/yolo",
+              "handler": "sidekick_yolo"
+            }
+          ],
+          "shape": "round-rectangle"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-utlities",
+          "label": "utlities",
+          "service_type": "utility",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "octagon"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-veriton-download-service",
+          "label": "veriton-download-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-video-archiver-service",
+          "label": "video-archiver-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-video-processing-service",
+          "label": "video-processing-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-dtp-krowten-youtube-caching",
+          "label": "youtube-caching",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": "cloud-run",
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      },
+      {
+        "data": {
+          "id": "lds-krowten-playlist-service",
+          "label": "playlist-service",
+          "service_type": "job",
+          "framework": null,
+          "deploy_target": null,
+          "primary_language": "python",
+          "routes_count": 0,
+          "routes": [],
+          "shape": "ellipse"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "e0",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-jobs",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-asset-type-change",
+          "data_flow": "Asset ID + new type \u2192 updates asset classification",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e1",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-video-processing-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-audio-extraction",
+          "data_flow": "Video file reference \u2192 extracts audio track from video",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e2",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-channel-selector-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-channel-selector",
+          "data_flow": "Transcript embeddings \u2192 semantic match to best-fit YouTube channel",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e3",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-frame-gen-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-frame-generation",
+          "data_flow": "Video file reference \u2192 extracts frames every ~7 seconds",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e4",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-iconik-data",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-iconik-restore",
+          "data_flow": "Asset ID \u2192 triggers restore from deep storage in Ikonik",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e5",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-iconik-jobs",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-iconik-tagger",
+          "data_flow": "Asset metadata \u2192 writes tags back to Ikonik MAM",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e6",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-metadata-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-metadata-generation",
+          "data_flow": "Transcript text \u2192 AI generates title, tags, and description",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e7",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-jobs",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-poll-upload-results",
+          "data_flow": "Upload job ID \u2192 checks YouTube upload status",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e8",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-policy-generation-job",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-rights-policy-generation",
+          "data_flow": "Territory/rights data \u2192 matches to YouTube CMS policy names",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e9",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-rightsline-policy-usage-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-rightsline-policy-usage",
+          "data_flow": "Policy + territory mapping from Rightsline",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e10",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-delivery-complete-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-sftp-delivery-file-job",
+          "data_flow": "Delivery file path \u2192 marks SFTP delivery as complete",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e11",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-metadata-loader-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-sftp-metadata-upload",
+          "data_flow": "Metadata XML/JSON \u2192 uploads metadata via SFTP",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e12",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-video-uploader-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-sftp-video-upload-job",
+          "data_flow": "Video file path \u2192 uploads video via SFTP",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e13",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-thumb-gen-v2-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-thumbnail-generation",
+          "data_flow": "Selected frame + Sidekick template \u2192 renders final thumbnail image",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e14",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-transcription-generation-executor",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-transcription-generation",
+          "data_flow": "Audio file reference \u2192 runs Whisper transcription",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e15",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-ultralytics",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-video-analysis",
+          "data_flow": "Video file reference \u2192 YOLO object detection on frames",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e16",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-iconik-download-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-video-download",
+          "data_flow": "Asset ID + Ikonik file path \u2192 downloads video from Ikonik/AWS to GCS",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e17",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-scheduling-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-video-scheduler",
+          "data_flow": "Video + channel + schedule rules \u2192 assigns publish date/time",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e18",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-video-uploader-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-video-upload",
+          "data_flow": "Video file path \u2192 uploads video via SFTP",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e19",
+          "source": "lds-dtp-krowten-firestore-pubsub-watcher",
+          "target": "lds-dtp-krowten-sftp-jobs",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-youtube-upload",
+          "data_flow": "Video file + metadata + thumbnail \u2192 uploads to YouTube",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e20",
+          "source": "lds-dtp-krowten-rights-data",
+          "target": "lds-dtp-krowten-rightsline-policy-usage-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-rightsline",
+          "data_flow": "Rights data \u2192 fetches/processes Rightsline catalogue entries",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e21",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-metadata-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e22",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e23",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-video-processing-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e24",
+          "source": "lds-dtp-krowten-metadata-service",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e25",
+          "source": "lds-dtp-krowten-metadata-service",
+          "target": "lds-dtp-krowten-video-processing-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e26",
+          "source": "lds-dtp-krowten-utlities",
+          "target": "lds-dtp-krowten-video-processing-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e27",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-frame-gen-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e28",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-frontend",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e29",
+          "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-frontend",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e30",
+          "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-frame-tuner",
+          "edge_type": "gcs",
+          "label": "lds-video-asset-storage",
+          "data_flow": "Raw video files from Ikonik",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e31",
+          "source": "lds-dtp-krowten-backend",
+          "target": "lds-dtp-krowten-scheduling-service",
+          "edge_type": "firestore",
+          "label": "videos",
+          "data_flow": "Video documents \u2014 status, metadata, channel assignments, pipeline state",
+          "colour": "#9b59b6"
+        }
+      },
+      {
+        "data": {
+          "id": "e32",
+          "source": "lds-dtp-krowten-backend",
+          "target": "lds-dtp-krowten-youtube-caching",
+          "edge_type": "firestore",
+          "label": "videos",
+          "data_flow": "Video documents \u2014 status, metadata, channel assignments, pipeline state",
+          "colour": "#9b59b6"
+        }
+      },
+      {
+        "data": {
+          "id": "e33",
+          "source": "lds-dtp-krowten-scheduling-service",
+          "target": "lds-dtp-krowten-youtube-caching",
+          "edge_type": "firestore",
+          "label": "videos",
+          "data_flow": "Video documents \u2014 status, metadata, channel assignments, pipeline state",
+          "colour": "#9b59b6"
+        }
+      },
+      {
+        "data": {
+          "id": "e34",
+          "source": "lds-dtp-krowten-scheduling-service",
+          "target": "lds-dtp-krowten-youtube-caching",
+          "edge_type": "firestore",
+          "label": "youtube-cache",
+          "data_flow": "Cached YouTube channel data \u2014 recent videos, transcripts for matching",
+          "colour": "#9b59b6"
+        }
+      },
+      {
+        "data": {
+          "id": "e35",
+          "source": "lds-dtp-krowten-backend",
+          "target": "lds-dtp-krowten-job-executor-service",
+          "edge_type": "http",
+          "label": "self.job_service_url",
+          "data_flow": "Job dispatch commands \u2192 triggers pipeline steps",
+          "colour": "#e74c3c"
+        }
+      }
+    ]
+  }
+}

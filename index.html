@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krowten Architecture Map</title>
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"></script>
+<script src="https://unpkg.com/cose-base@2.2.0/cose-base.js"></script>
+<script src="https://unpkg.com/cytoscape-fcose@2.2.0/cytoscape-fcose.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e1e4e8; overflow: hidden; height: 100vh; }
+
+  /* ── Top bar ────────────────────────────────────── */
+  #topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; background: #161b22; border-bottom: 1px solid #30363d;
+    height: 52px; z-index: 10; position: relative;
+  }
+  #topbar h1 { font-size: 16px; font-weight: 600; color: #f0f6fc; }
+  #topbar .controls { display: flex; gap: 8px; align-items: center; }
+
+  /* ── Buttons & inputs ───────────────────────────── */
+  .btn {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid #30363d;
+    background: #21262d; color: #c9d1d9; font-size: 12px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #30363d; }
+  .btn.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+
+  #search {
+    padding: 5px 10px; border-radius: 6px; border: 1px solid #30363d;
+    background: #0d1117; color: #c9d1d9; font-size: 12px; width: 200px;
+    outline: none;
+  }
+  #search:focus { border-color: #1f6feb; }
+  #search::placeholder { color: #484f58; }
+
+  /* ── Legend ──────────────────────────────────────── */
+  #legend {
+    position: absolute; bottom: 16px; left: 16px; background: #161b22;
+    border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px;
+    font-size: 11px; z-index: 10;
+  }
+  #legend h3 { font-size: 11px; margin-bottom: 6px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid; }
+
+  /* ── Graph container ────────────────────────────── */
+  #cy { width: 100%; height: calc(100vh - 52px); }
+
+  /* ── Detail panel ───────────────────────────────── */
+  #panel {
+    position: absolute; top: 52px; right: 0; width: 380px;
+    height: calc(100vh - 52px); background: #161b22;
+    border-left: 1px solid #30363d; overflow-y: auto;
+    transform: translateX(100%); transition: transform 0.25s ease;
+    z-index: 10; padding: 20px;
+  }
+  #panel.open { transform: translateX(0); }
+  #panel-close {
+    position: absolute; top: 12px; right: 12px; background: none;
+    border: none; color: #8b949e; cursor: pointer; font-size: 18px;
+  }
+  #panel h2 { font-size: 16px; margin-bottom: 4px; color: #f0f6fc; padding-right: 30px; }
+  #panel .subtitle { font-size: 12px; color: #8b949e; margin-bottom: 16px; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-section h3 {
+    font-size: 11px; color: #8b949e; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 6px; border-bottom: 1px solid #21262d;
+    padding-bottom: 4px;
+  }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 11px; margin: 2px 2px;
+  }
+  .badge-api { background: #1a3a2a; color: #3fb950; }
+  .badge-job { background: #2a2a1a; color: #d29922; }
+  .badge-frontend { background: #1a2a3a; color: #58a6ff; }
+  .badge-cloud_function { background: #2a1a3a; color: #bc8cff; }
+  .badge-utility { background: #2a2a2a; color: #8b949e; }
+  .badge-unknown { background: #1a1a1a; color: #484f58; }
+
+  .route-list { list-style: none; font-size: 12px; font-family: 'SF Mono', 'Fira Code', monospace; }
+  .route-list li { padding: 3px 0; display: flex; gap: 8px; }
+  .route-method { font-weight: 700; min-width: 50px; }
+  .route-method.GET { color: #3fb950; }
+  .route-method.POST { color: #d29922; }
+  .route-method.PUT { color: #58a6ff; }
+  .route-method.DELETE { color: #f85149; }
+  .route-method.PATCH { color: #bc8cff; }
+  .route-path { color: #c9d1d9; }
+
+  .edge-list { list-style: none; font-size: 12px; }
+  .edge-list li { padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+  .edge-type-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .env-list { font-size: 11px; font-family: 'SF Mono', 'Fira Code', monospace; color: #8b949e; columns: 2; }
+  .env-list span { display: block; padding: 1px 0; }
+
+  /* ── Edge tooltip ────────────────────────────────── */
+  #edge-tooltip {
+    position: absolute; display: none; z-index: 100;
+    background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+    padding: 10px 14px; max-width: 340px; pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  #edge-tooltip .tt-type {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 4px; font-weight: 600;
+  }
+  #edge-tooltip .tt-label {
+    font-size: 11px; font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #8b949e; margin-bottom: 4px; word-break: break-all;
+  }
+  #edge-tooltip .tt-flow {
+    font-size: 12px; color: #e1e4e8; line-height: 1.4;
+  }
+  .data-flow-text { font-size: 12px; color: #c9d1d9; line-height: 1.5; margin-top: 2px; }
+
+  /* ── Changelog panel ─────────────────────────────── */
+  #changelog-panel {
+    position: absolute; top: 52px; left: 0; width: 420px;
+    height: calc(100vh - 52px); background: #161b22;
+    border-right: 1px solid #30363d; overflow-y: auto;
+    transform: translateX(-100%); transition: transform 0.25s ease;
+    z-index: 10; padding: 20px;
+  }
+  #changelog-panel.open { transform: translateX(0); }
+  #changelog-close {
+    position: absolute; top: 12px; right: 12px; background: none;
+    border: none; color: #8b949e; cursor: pointer; font-size: 18px;
+  }
+  #changelog-panel h2 { font-size: 16px; margin-bottom: 4px; color: #f0f6fc; padding-right: 30px; }
+  #changelog-panel .cl-date { font-size: 12px; color: #8b949e; margin-bottom: 12px; }
+  #changelog-panel .cl-summary {
+    font-size: 13px; color: #d29922; background: #2a2a1a;
+    border: 1px solid #3d3520; border-radius: 6px;
+    padding: 8px 12px; margin-bottom: 16px;
+  }
+  .cl-section { margin-bottom: 16px; }
+  .cl-section h3 {
+    font-size: 11px; color: #8b949e; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px solid #21262d;
+    padding-bottom: 4px;
+  }
+  .cl-item { margin-bottom: 12px; }
+  .cl-item-name { font-size: 13px; font-weight: 600; color: #f0f6fc; margin-bottom: 4px; }
+  .cl-item-changes { list-style: none; font-size: 12px; color: #c9d1d9; }
+  .cl-item-changes li { padding: 2px 0 2px 12px; position: relative; }
+  .cl-item-changes li::before {
+    content: ''; position: absolute; left: 0; top: 10px;
+    width: 4px; height: 4px; border-radius: 50%; background: #484f58;
+  }
+  .cl-added { color: #3fb950; }
+  .cl-removed { color: #f85149; }
+  .cl-empty { font-size: 12px; color: #484f58; font-style: italic; }
+
+  .btn-changelog { position: relative; }
+  .btn-changelog .cl-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: #d29922; color: #000; font-size: 9px; font-weight: 700;
+    width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Stats bar ──────────────────────────────────── */
+  #stats {
+    position: absolute; bottom: 16px; right: 16px; background: #161b22;
+    border: 1px solid #30363d; border-radius: 8px; padding: 8px 14px;
+    font-size: 11px; color: #8b949e; z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div style="display:flex; align-items: center; gap: 12px;">
+    <h1>Krowten Architecture Map</h1>
+    <button class="btn btn-changelog" id="btn-changelog" onclick="toggleChangelog()" style="display:none">
+      What Changed
+    </button>
+  </div>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Search services...">
+    <button class="btn" onclick="fitGraph()">Fit</button>
+    <button class="btn" id="btn-layout" onclick="cycleLayout()">Layout: fCOSE</button>
+    <div style="border-left:1px solid #30363d; height:20px; margin:0 4px"></div>
+    <button class="btn edge-filter active" data-type="cloud_tasks">Tasks</button>
+    <button class="btn edge-filter active" data-type="gcs">GCS</button>
+    <button class="btn edge-filter active" data-type="firestore">Firestore</button>
+    <button class="btn edge-filter active" data-type="pubsub">Pub/Sub</button>
+    <button class="btn edge-filter active" data-type="http">HTTP</button>
+  </div>
+</div>
+
+<div id="cy"></div>
+
+<div id="legend">
+  <h3>Edge types</h3>
+  <div class="legend-row"><div class="legend-line" style="background:#e67e22"></div> Cloud Tasks</div>
+  <div class="legend-row"><div class="legend-line" style="background:#3498db"></div> GCS Bucket</div>
+  <div class="legend-row"><div class="legend-line" style="background:#9b59b6"></div> Firestore</div>
+  <div class="legend-row"><div class="legend-line" style="background:#2ecc71"></div> Pub/Sub</div>
+  <div class="legend-row"><div class="legend-line" style="background:#e74c3c"></div> HTTP</div>
+  <h3 style="margin-top:10px">Node types</h3>
+  <div class="legend-row"><div class="legend-dot" style="border-color:#3fb950; background:#1a3a2a"></div> API</div>
+  <div class="legend-row"><div class="legend-dot" style="border-color:#d29922; background:#2a2a1a"></div> Job</div>
+  <div class="legend-row"><div class="legend-dot" style="border-color:#58a6ff; background:#1a2a3a"></div> Frontend</div>
+  <div class="legend-row"><div class="legend-dot" style="border-color:#bc8cff; background:#2a1a3a"></div> Cloud Function</div>
+  <div class="legend-row"><div class="legend-dot" style="border-color:#8b949e; background:#2a2a2a"></div> Utility</div>
+</div>
+
+<div id="stats"></div>
+
+<div id="edge-tooltip"></div>
+
+<div id="changelog-panel">
+  <button id="changelog-close" onclick="toggleChangelog()">&times;</button>
+  <div id="changelog-content"></div>
+</div>
+
+<div id="panel">
+  <button id="panel-close" onclick="closePanel()">&times;</button>
+  <div id="panel-content"></div>
+</div>
+
+<script>
+// ── Colour maps ──────────────────────────────────────────
+const EDGE_COLOURS = {
+  cloud_tasks: '#e67e22',
+  pubsub: '#2ecc71',
+  gcs: '#3498db',
+  firestore: '#9b59b6',
+  http: '#e74c3c',
+};
+
+const NODE_COLOURS = {
+  api:            { bg: '#1a3a2a', border: '#3fb950' },
+  job:            { bg: '#2a2a1a', border: '#d29922' },
+  frontend:       { bg: '#1a2a3a', border: '#58a6ff' },
+  cloud_function: { bg: '#2a1a3a', border: '#bc8cff' },
+  library:        { bg: '#1a2a2a', border: '#39d2c0' },
+  utility:        { bg: '#2a2a2a', border: '#8b949e' },
+  unknown:        { bg: '#1a1a1a', border: '#484f58' },
+};
+
+// ── Load data & init ─────────────────────────────────────
+let cy, graphData, changelogData;
+
+fetch('graph-data.json')
+  .then(r => r.json())
+  .then(data => {
+    graphData = data;
+    initCytoscape(data);
+    updateStats();
+  })
+  .catch(e => {
+    document.getElementById('cy').innerHTML =
+      '<p style="padding:40px;color:#f85149">Failed to load graph-data.json: ' + e.message + '</p>';
+  });
+
+// Load changelog (optional — may not exist on first scan)
+fetch('changelog.json')
+  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+  .then(data => {
+    changelogData = data;
+    const btn = document.getElementById('btn-changelog');
+    btn.style.display = 'inline-block';
+
+    // Show badge with change count
+    const totalChanges =
+      (data.services.added?.length || 0) +
+      (data.services.removed?.length || 0) +
+      (data.services.changed?.length || 0) +
+      (data.connections.added?.length || 0) +
+      (data.connections.removed?.length || 0);
+
+    if (totalChanges > 0) {
+      btn.innerHTML = `What Changed <span class="cl-badge">${totalChanges}</span>`;
+    }
+    renderChangelog(data);
+  })
+  .catch(() => { /* No changelog yet — that's fine */ });
+
+function initCytoscape(data) {
+  cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: data.elements,
+    minZoom: 0.15,
+    maxZoom: 4,
+    wheelSensitivity: 0.3,
+
+    style: [
+      // ── Nodes ──
+      {
+        selector: 'node',
+        style: {
+          'label': 'data(label)',
+          'text-valign': 'bottom',
+          'text-margin-y': 6,
+          'font-size': 10,
+          'font-family': '-apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif',
+          'color': '#c9d1d9',
+          'text-outline-color': '#0f1117',
+          'text-outline-width': 2,
+          'width': 'mapData(routes_count, 0, 46, 28, 60)',
+          'height': 'mapData(routes_count, 0, 46, 28, 60)',
+          'background-color': '#21262d',
+          'border-width': 2,
+          'border-color': '#30363d',
+          'shape': 'data(shape)',
+          'transition-property': 'background-color, border-color, width, height, opacity',
+          'transition-duration': '0.2s',
+        }
+      },
+      // Type-specific node colours
+      ...Object.entries(NODE_COLOURS).map(([type, colours]) => ({
+        selector: `node[service_type="${type}"]`,
+        style: {
+          'background-color': colours.bg,
+          'border-color': colours.border,
+        }
+      })),
+      // Highlighted node
+      {
+        selector: 'node.highlighted',
+        style: {
+          'border-width': 3,
+          'text-outline-width': 3,
+          'font-weight': 'bold',
+          'z-index': 999,
+        }
+      },
+      // Dimmed
+      {
+        selector: 'node.dimmed',
+        style: { 'opacity': 0.15 }
+      },
+      // Search match
+      {
+        selector: 'node.search-match',
+        style: {
+          'border-width': 3,
+          'border-color': '#f0f6fc',
+          'background-color': '#30363d',
+          'z-index': 999,
+        }
+      },
+
+      // ── Edges ──
+      {
+        selector: 'edge',
+        style: {
+          'width': 1.5,
+          'line-color': 'data(colour)',
+          'target-arrow-color': 'data(colour)',
+          'target-arrow-shape': 'triangle',
+          'arrow-scale': 0.8,
+          'curve-style': 'bezier',
+          'opacity': 0.6,
+          'transition-property': 'opacity, width',
+          'transition-duration': '0.2s',
+        }
+      },
+      {
+        selector: 'edge[edge_type="gcs"], edge[edge_type="firestore"]',
+        style: {
+          'target-arrow-shape': 'none',
+          'source-arrow-shape': 'none',
+          'line-style': 'dashed',
+          'line-dash-pattern': [6, 3],
+        }
+      },
+      {
+        selector: 'edge.highlighted',
+        style: { 'opacity': 1, 'width': 2.5, 'z-index': 999 }
+      },
+      {
+        selector: 'edge.dimmed',
+        style: { 'opacity': 0.05 }
+      },
+      {
+        selector: 'edge.hidden-type',
+        style: { 'display': 'none' }
+      },
+    ],
+
+    layout: { name: 'fcose', animate: true, animationDuration: 600, randomize: true, nodeDimensionsIncludeLabels: true, idealEdgeLength: 140, nodeRepulsion: 8000, edgeElasticity: 0.1 },
+  });
+
+  // ── Interaction ──
+  cy.on('tap', 'node', e => showPanel(e.target));
+  cy.on('tap', e => { if (e.target === cy) closePanel(); });
+
+  cy.on('mouseover', 'node', e => highlightNeighbours(e.target));
+  cy.on('mouseout', 'node', () => clearHighlight());
+
+  // Edge hover tooltip
+  const tooltip = document.getElementById('edge-tooltip');
+  cy.on('mouseover', 'edge', e => {
+    const ed = e.target.data();
+    const flow = ed.data_flow;
+    if (!flow && !ed.label) return;
+    const typeLabel = {cloud_tasks:'Cloud Tasks', pubsub:'Pub/Sub', gcs:'GCS Bucket', firestore:'Firestore', http:'HTTP'}[ed.edge_type] || ed.edge_type;
+    tooltip.innerHTML = `
+      <div class="tt-type" style="color:${EDGE_COLOURS[ed.edge_type] || '#8b949e'}">${typeLabel}</div>
+      <div class="tt-label">${ed.label}</div>
+      ${flow ? `<div class="tt-flow">${flow}</div>` : ''}
+    `;
+    tooltip.style.display = 'block';
+  });
+  cy.on('mouseout', 'edge', () => { tooltip.style.display = 'none'; });
+  cy.on('mousemove', 'edge', e => {
+    const pos = e.renderedPosition || e.position;
+    tooltip.style.left = (pos.x + 16) + 'px';
+    tooltip.style.top = (pos.y + 60) + 'px';
+  });
+}
+
+// ── Highlight neighbours ─────────────────────────────────
+function highlightNeighbours(node) {
+  const neighbourhood = node.closedNeighborhood();
+  cy.elements().addClass('dimmed');
+  neighbourhood.removeClass('dimmed').addClass('highlighted');
+}
+
+function clearHighlight() {
+  cy.elements().removeClass('dimmed highlighted');
+}
+
+// ── Detail panel ─────────────────────────────────────────
+function showPanel(node) {
+  const d = node.data();
+  const edges = node.connectedEdges();
+  const panel = document.getElementById('panel');
+  const content = document.getElementById('panel-content');
+
+  // Group edges
+  const incoming = [];
+  const outgoing = [];
+  const shared = [];
+  edges.forEach(e => {
+    const ed = e.data();
+    if (ed.edge_type === 'gcs' || ed.edge_type === 'firestore') {
+      const other = e.source().id() === d.id ? e.target().data().label : e.source().data().label;
+      shared.push({ type: ed.edge_type, label: ed.label, other, data_flow: ed.data_flow });
+    } else if (ed.source === d.id) {
+      outgoing.push({ type: ed.edge_type, label: ed.label, target: e.target().data().label, data_flow: ed.data_flow });
+    } else {
+      incoming.push({ type: ed.edge_type, label: ed.label, source: e.source().data().label, data_flow: ed.data_flow });
+    }
+  });
+
+  let html = `
+    <h2>${d.label}</h2>
+    <div class="subtitle">${d.id}</div>
+
+    <div class="detail-section">
+      <h3>Service Info</h3>
+      <span class="badge badge-${d.service_type}">${d.service_type}</span>
+      ${d.framework ? `<span class="badge badge-api">${d.framework}</span>` : ''}
+      ${d.deploy_target ? `<span class="badge badge-job">${d.deploy_target}</span>` : ''}
+      ${d.primary_language ? `<span class="badge badge-frontend">${d.primary_language}</span>` : ''}
+    </div>
+  `;
+
+  // Routes
+  if (d.routes && d.routes.length > 0) {
+    html += `<div class="detail-section"><h3>API Routes (${d.routes.length})</h3><ul class="route-list">`;
+    d.routes.forEach(r => {
+      html += `<li><span class="route-method ${r.method}">${r.method}</span><span class="route-path">${r.path}</span></li>`;
+    });
+    html += '</ul></div>';
+  }
+
+  // Connections
+  if (outgoing.length > 0) {
+    html += `<div class="detail-section"><h3>Dispatches to</h3><ul class="edge-list">`;
+    outgoing.forEach(e => {
+      html += `<li>
+        <span class="edge-type-dot" style="background:${EDGE_COLOURS[e.type]}"></span>
+        <div><strong>${e.target}</strong>${e.data_flow ? `<div class="data-flow-text">${e.data_flow}</div>` : ''}</div>
+      </li>`;
+    });
+    html += '</ul></div>';
+  }
+
+  if (incoming.length > 0) {
+    html += `<div class="detail-section"><h3>Receives from</h3><ul class="edge-list">`;
+    incoming.forEach(e => {
+      html += `<li>
+        <span class="edge-type-dot" style="background:${EDGE_COLOURS[e.type]}"></span>
+        <div><strong>${e.source}</strong>${e.data_flow ? `<div class="data-flow-text">${e.data_flow}</div>` : ''}</div>
+      </li>`;
+    });
+    html += '</ul></div>';
+  }
+
+  if (shared.length > 0) {
+    html += `<div class="detail-section"><h3>Shared resources</h3><ul class="edge-list">`;
+    shared.forEach(e => {
+      html += `<li>
+        <span class="edge-type-dot" style="background:${EDGE_COLOURS[e.type]}"></span>
+        <div><strong>${e.label}</strong> (with ${e.other})${e.data_flow ? `<div class="data-flow-text">${e.data_flow}</div>` : ''}</div>
+      </li>`;
+    });
+    html += '</ul></div>';
+  }
+
+  // GitHub link
+  html += `<div class="detail-section" style="margin-top:24px">
+    <a href="https://github.com/little-dot-studios/${d.id}" target="_blank"
+       style="color:#58a6ff; font-size:12px; text-decoration:none">
+      View on GitHub &rarr;
+    </a>
+  </div>`;
+
+  content.innerHTML = html;
+  panel.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+}
+
+// ── Search ───────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  cy.nodes().removeClass('search-match dimmed');
+  if (!q) return;
+
+  const matches = cy.nodes().filter(n =>
+    n.data('label').toLowerCase().includes(q) ||
+    n.data('id').toLowerCase().includes(q)
+  );
+
+  if (matches.length > 0) {
+    cy.nodes().addClass('dimmed');
+    matches.removeClass('dimmed').addClass('search-match');
+    matches.connectedEdges().removeClass('dimmed');
+    matches.connectedEdges().connectedNodes().removeClass('dimmed');
+  }
+});
+
+// ── Edge type filtering ──────────────────────────────────
+document.querySelectorAll('.edge-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('active');
+    const type = btn.dataset.type;
+    const visible = btn.classList.contains('active');
+    cy.edges(`[edge_type="${type}"]`).toggleClass('hidden-type', !visible);
+  });
+});
+
+// ── Layout cycling ───────────────────────────────────────
+const layouts = [
+  { name: 'fcose', label: 'fCOSE', opts: { animate: true, animationDuration: 600, randomize: false, nodeDimensionsIncludeLabels: true, idealEdgeLength: 140, nodeRepulsion: 8000, edgeElasticity: 0.1 } },
+  { name: 'breadthfirst', label: 'Hierarchy', opts: { animate: true, animationDuration: 600, directed: true, spacingFactor: 1.2, nodeDimensionsIncludeLabels: true } },
+  { name: 'circle', label: 'Circle', opts: { animate: true, animationDuration: 600, nodeDimensionsIncludeLabels: true } },
+  { name: 'grid', label: 'Grid', opts: { animate: true, animationDuration: 600, nodeDimensionsIncludeLabels: true, condense: true } },
+  { name: 'concentric', label: 'Concentric', opts: { animate: true, animationDuration: 600, nodeDimensionsIncludeLabels: true, concentric: n => n.connectedEdges().length, levelWidth: () => 3 } },
+];
+let currentLayout = 0;
+
+function cycleLayout() {
+  currentLayout = (currentLayout + 1) % layouts.length;
+  const l = layouts[currentLayout];
+  document.getElementById('btn-layout').textContent = 'Layout: ' + l.label;
+  cy.layout({ name: l.name, ...l.opts }).run();
+}
+
+function fitGraph() {
+  cy.fit(undefined, 40);
+}
+
+// ── Stats ────────────────────────────────────────────────
+function updateStats() {
+  const nodes = graphData.elements.nodes.length;
+  const edges = graphData.elements.edges.length;
+  document.getElementById('stats').textContent = `${nodes} services / ${edges} connections`;
+}
+
+// ── Changelog ────────────────────────────────────────────
+function toggleChangelog() {
+  document.getElementById('changelog-panel').classList.toggle('open');
+}
+
+function renderChangelog(data) {
+  const el = document.getElementById('changelog-content');
+  let html = `
+    <h2>What Changed</h2>
+    <div class="cl-date">Scanned ${data.date} &mdash; compared to ${data.compared_to}</div>
+    <div class="cl-summary">${data.summary}</div>
+  `;
+
+  // New services
+  if (data.services.added?.length > 0) {
+    html += `<div class="cl-section"><h3 class="cl-added">New Services</h3>`;
+    data.services.added.forEach(s => {
+      html += `<div class="cl-item"><div class="cl-item-name cl-added">+ ${s.name}</div></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Removed services
+  if (data.services.removed?.length > 0) {
+    html += `<div class="cl-section"><h3 class="cl-removed">Removed Services</h3>`;
+    data.services.removed.forEach(s => {
+      html += `<div class="cl-item"><div class="cl-item-name cl-removed">- ${s.name}</div></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Changed services
+  if (data.services.changed?.length > 0) {
+    html += `<div class="cl-section"><h3>Changed Services</h3>`;
+    data.services.changed.forEach(s => {
+      html += `<div class="cl-item">
+        <div class="cl-item-name">${s.name}</div>
+        <ul class="cl-item-changes">
+          ${s.changes.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // New connections
+  if (data.connections.added?.length > 0) {
+    html += `<div class="cl-section"><h3 class="cl-added">New Connections</h3>`;
+    data.connections.added.forEach(c => {
+      html += `<div class="cl-item"><div class="cl-item-changes"><li class="cl-added">${c.description}</li></div></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Removed connections
+  if (data.connections.removed?.length > 0) {
+    html += `<div class="cl-section"><h3 class="cl-removed">Removed Connections</h3>`;
+    data.connections.removed.forEach(c => {
+      html += `<div class="cl-item"><div class="cl-item-changes"><li class="cl-removed">${c.description}</li></div></div>`;
+    });
+    html += '</div>';
+  }
+
+  // Empty state
+  if (!data.services.added?.length && !data.services.removed?.length &&
+      !data.services.changed?.length && !data.connections.added?.length &&
+      !data.connections.removed?.length) {
+    html += '<p class="cl-empty">No changes detected since the last scan.</p>';
+  }
+
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "date": "2026-03-20",
+  "compared_to": "2026-03-19",
+  "summary": "1 service changed, 1 removed connection",
+  "services": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      {
+        "repo": "lds-dtp-krowten-backend",
+        "name": "backend",
+        "changes": [
+          "New route: GET /assets/{doc_id}/info",
+          "New route: GET /batch-unified",
+          "New route: GET /tags",
+          "New route: POST /tags",
+          "New route: PUT /recipes/{name}/rename"
+        ]
+      }
+    ]
+  },
+  "connections": {
+    "added": [],
+    "removed": [
+      {
+        "source": "lds-dtp-krowten-iconik-data",
+        "target": "lds-dtp-krowten-iconik-download-service",
+        "type": "cloud_tasks",
+        "label": "lds-dtp-krowten-iconik",
+        "description": "iconik-data no longer connects to iconik-download-service via Cloud Tasks"
+      }
+    ]
+  }
+}
