@@ -1,23 +1,11 @@
 {
-  "date": "2026-03-20",
-  "compared_to": "2026-03-19",
-  "summary": "1 service changed",
+  "date": "2026-03-23",
+  "compared_to": "2026-03-20",
+  "summary": "No changes detected",
   "services": {
     "added": [],
     "removed": [],
-    "changed": [
-      {
-        "repo": "lds-dtp-krowten-backend",
-        "name": "backend",
-        "changes": [
-          "New route: GET /assets/{doc_id}/info",
-          "New route: GET /batch-unified",
-          "New route: GET /tags",
-          "New route: POST /tags",
-          "New route: PUT /recipes/{name}/rename"
-        ]
-      }
-    ]
+    "changed": []
   },
   "connections": {
     "added": [],
