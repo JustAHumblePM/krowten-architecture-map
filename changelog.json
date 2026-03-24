@@ -1,7 +1,7 @@
 {
-  "date": "2026-03-23",
-  "compared_to": "2026-03-20",
-  "summary": "No changes detected",
+  "date": "2026-03-24",
+  "compared_to": "2026-03-23",
+  "summary": "1 removed connection",
   "services": {
     "added": [],
     "removed": [],
@@ -9,6 +9,15 @@
   },
   "connections": {
     "added": [],
-    "removed": []
+    "removed": [
+      {
+        "source": "lds-dtp-krowten-iconik-data",
+        "target": "lds-dtp-krowten-iconik-download-service",
+        "type": "cloud_tasks",
+        "label": "lds-dtp-krowten-iconik",
+        "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
+        "description": "iconik-data no longer connects to iconik-download-service via Cloud Tasks"
+      }
+    ]
   }
 }
