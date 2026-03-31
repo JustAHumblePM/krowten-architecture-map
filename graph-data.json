@@ -9,7 +9,7 @@
           "framework": "fastapi",
           "deploy_target": "cloud-run",
           "primary_language": "python",
-          "routes_count": 8,
+          "routes_count": 9,
           "routes": [
             {
               "method": "GET",
@@ -45,6 +45,11 @@
               "method": "POST",
               "path": "/validate",
               "handler": "validate_assets"
+            },
+            {
+              "method": "POST",
+              "path": "/bulk-assets",
+              "handler": "get_bulk_assets"
             },
             {
               "method": "POST",

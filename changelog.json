@@ -1,16 +1,16 @@
 {
-  "date": "2026-03-25",
-  "compared_to": "2026-03-24",
+  "date": "2026-03-31",
+  "compared_to": "2026-03-25",
   "summary": "1 service changed",
   "services": {
     "added": [],
     "removed": [],
     "changed": [
       {
-        "repo": "lds-dtp-krowten-iconik-jobs",
-        "name": "iconik-jobs",
+        "repo": "lds-baserock-krowten-data-service",
+        "name": "data-service",
         "changes": [
-          "Now accesses Firestore collection: video-assets"
+          "New route: POST /bulk-assets"
         ]
       }
     ]
