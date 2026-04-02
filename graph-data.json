@@ -69,7 +69,7 @@
           "framework": "fastapi",
           "deploy_target": "cloud-run",
           "primary_language": "python",
-          "routes_count": 51,
+          "routes_count": 60,
           "routes": [
             {
               "method": "GET",
@@ -229,6 +229,51 @@
             {
               "method": "GET",
               "path": "/tags",
+              "handler": "list_tags"
+            },
+            {
+              "method": "POST",
+              "path": "/tags",
+              "handler": "bulk_tag"
+            },
+            {
+              "method": "PUT",
+              "path": "/assets/{doc_id}/channels/{channel_id}/template",
+              "handler": "assign_asset_template"
+            },
+            {
+              "method": "DELETE",
+              "path": "/assets/{doc_id}/channels/{channel_id}/template",
+              "handler": "remove_asset_template"
+            },
+            {
+              "method": "POST",
+              "path": "/templates/bulk-assign",
+              "handler": "bulk_assign_template"
+            },
+            {
+              "method": "POST",
+              "path": "/templates/bulk-remove",
+              "handler": "bulk_remove_template"
+            },
+            {
+              "method": "GET",
+              "path": "/assets/{doc_id}/channels/{channel_id}/template",
+              "handler": "resolve_template"
+            },
+            {
+              "method": "GET",
+              "path": "/channels/{channel_id}/assets",
+              "handler": "list_channel_assets"
+            },
+            {
+              "method": "GET",
+              "path": "/templates/{template_name}/usage",
+              "handler": "get_template_usage"
+            },
+            {
+              "method": "GET",
+              "path": "/channels/{channel_id}/tags",
               "handler": "list_tags"
             },
             {
@@ -1237,6 +1282,17 @@
       {
         "data": {
           "id": "e20",
+          "source": "lds-dtp-krowten-iconik-data",
+          "target": "lds-dtp-krowten-iconik-download-service",
+          "edge_type": "cloud_tasks",
+          "label": "lds-dtp-krowten-iconik",
+          "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
+          "colour": "#e67e22"
+        }
+      },
+      {
+        "data": {
+          "id": "e21",
           "source": "lds-dtp-krowten-rights-data",
           "target": "lds-dtp-krowten-rightsline-policy-usage-service",
           "edge_type": "cloud_tasks",
@@ -1247,7 +1303,7 @@
       },
       {
         "data": {
-          "id": "e21",
+          "id": "e22",
           "source": "lds-dtp-krowten-channel-selector-service",
           "target": "lds-dtp-krowten-metadata-service",
           "edge_type": "gcs",
@@ -1258,20 +1314,9 @@
       },
       {
         "data": {
-          "id": "e22",
-          "source": "lds-dtp-krowten-channel-selector-service",
-          "target": "lds-dtp-krowten-utlities",
-          "edge_type": "gcs",
-          "label": "lds-krowten-dev-vp",
-          "data_flow": "Video files + processed assets (dev environment)",
-          "colour": "#3498db"
-        }
-      },
-      {
-        "data": {
           "id": "e23",
           "source": "lds-dtp-krowten-channel-selector-service",
-          "target": "lds-dtp-krowten-video-processing-service",
+          "target": "lds-dtp-krowten-utlities",
           "edge_type": "gcs",
           "label": "lds-krowten-dev-vp",
           "data_flow": "Video files + processed assets (dev environment)",
@@ -1281,8 +1326,8 @@
       {
         "data": {
           "id": "e24",
-          "source": "lds-dtp-krowten-metadata-service",
-          "target": "lds-dtp-krowten-utlities",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-video-processing-service",
           "edge_type": "gcs",
           "label": "lds-krowten-dev-vp",
           "data_flow": "Video files + processed assets (dev environment)",
@@ -1293,7 +1338,7 @@
         "data": {
           "id": "e25",
           "source": "lds-dtp-krowten-metadata-service",
-          "target": "lds-dtp-krowten-video-processing-service",
+          "target": "lds-dtp-krowten-utlities",
           "edge_type": "gcs",
           "label": "lds-krowten-dev-vp",
           "data_flow": "Video files + processed assets (dev environment)",
@@ -1303,7 +1348,7 @@
       {
         "data": {
           "id": "e26",
-          "source": "lds-dtp-krowten-utlities",
+          "source": "lds-dtp-krowten-metadata-service",
           "target": "lds-dtp-krowten-video-processing-service",
           "edge_type": "gcs",
           "label": "lds-krowten-dev-vp",
@@ -1314,6 +1359,17 @@
       {
         "data": {
           "id": "e27",
+          "source": "lds-dtp-krowten-utlities",
+          "target": "lds-dtp-krowten-video-processing-service",
+          "edge_type": "gcs",
+          "label": "lds-krowten-dev-vp",
+          "data_flow": "Video files + processed assets (dev environment)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e28",
           "source": "lds-dtp-krowten-channel-selector-service",
           "target": "lds-dtp-krowten-frame-gen-service",
           "edge_type": "gcs",
@@ -1324,19 +1380,8 @@
       },
       {
         "data": {
-          "id": "e28",
-          "source": "lds-dtp-krowten-channel-selector-service",
-          "target": "lds-dtp-krowten-frontend",
-          "edge_type": "gcs",
-          "label": "lds-krowten-prod-vp",
-          "data_flow": "Video files + processed assets (production)",
-          "colour": "#3498db"
-        }
-      },
-      {
-        "data": {
           "id": "e29",
-          "source": "lds-dtp-krowten-frame-gen-service",
+          "source": "lds-dtp-krowten-channel-selector-service",
           "target": "lds-dtp-krowten-frontend",
           "edge_type": "gcs",
           "label": "lds-krowten-prod-vp",
@@ -1348,6 +1393,17 @@
         "data": {
           "id": "e30",
           "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-frontend",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e31",
+          "source": "lds-dtp-krowten-frame-gen-service",
           "target": "lds-dtp-krowten-frame-tuner",
           "edge_type": "gcs",
           "label": "lds-video-asset-storage",
@@ -1357,7 +1413,7 @@
       },
       {
         "data": {
-          "id": "e31",
+          "id": "e32",
           "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-scheduling-service",
           "edge_type": "firestore",
@@ -1368,19 +1424,8 @@
       },
       {
         "data": {
-          "id": "e32",
-          "source": "lds-dtp-krowten-backend",
-          "target": "lds-dtp-krowten-youtube-caching",
-          "edge_type": "firestore",
-          "label": "videos",
-          "data_flow": "Video documents \u2014 status, metadata, channel assignments, pipeline state",
-          "colour": "#9b59b6"
-        }
-      },
-      {
-        "data": {
           "id": "e33",
-          "source": "lds-dtp-krowten-scheduling-service",
+          "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-youtube-caching",
           "edge_type": "firestore",
           "label": "videos",
@@ -1394,6 +1439,17 @@
           "source": "lds-dtp-krowten-scheduling-service",
           "target": "lds-dtp-krowten-youtube-caching",
           "edge_type": "firestore",
+          "label": "videos",
+          "data_flow": "Video documents \u2014 status, metadata, channel assignments, pipeline state",
+          "colour": "#9b59b6"
+        }
+      },
+      {
+        "data": {
+          "id": "e35",
+          "source": "lds-dtp-krowten-scheduling-service",
+          "target": "lds-dtp-krowten-youtube-caching",
+          "edge_type": "firestore",
           "label": "youtube-cache",
           "data_flow": "Cached YouTube channel data \u2014 recent videos, transcripts for matching",
           "colour": "#9b59b6"
@@ -1401,7 +1457,7 @@
       },
       {
         "data": {
-          "id": "e35",
+          "id": "e36",
           "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-job-executor-service",
           "edge_type": "http",
