@@ -1,56 +1,23 @@
 {
-  "date": "2026-04-02",
-  "compared_to": "2026-03-31",
-  "summary": "3 services changed, 1 new connection",
+  "date": "2026-04-04",
+  "compared_to": "2026-04-02",
+  "summary": "1 removed connection",
   "services": {
     "added": [],
     "removed": [],
-    "changed": [
-      {
-        "repo": "lds-dtp-krowten-backend",
-        "name": "backend",
-        "changes": [
-          "New route: DELETE /assets/{doc_id}/channels/{channel_id}/template",
-          "New route: GET /assets/{doc_id}/channels/{channel_id}/template",
-          "New route: GET /channels/{channel_id}/tags",
-          "New route: GET /templates/{template_name}/usage",
-          "New route: POST /templates/bulk-assign",
-          "New route: POST /templates/bulk-remove",
-          "New route: PUT /assets/{doc_id}/channels/{channel_id}/template"
-        ]
-      },
-      {
-        "repo": "lds-dtp-krowten-sftp-delivery-complete-service",
-        "name": "sftp-delivery-complete-service",
-        "changes": [
-          "Now accesses Firestore collection: channels",
-          "New environment variables: APPLICATION_CREDENTIALS, CHANNEL_ID, SFTP_HOST, SFTP_PORT, YOUTUBE_API_ROOT, YOUTUBE_CONTENT_OWNER_ID, YOUTUBE_SCOPES, YOUTUBE_SERVICE_ACCOUNT_JSON"
-        ]
-      },
-      {
-        "repo": "lds-dtp-krowten-sftp-video-uploader-service",
-        "name": "sftp-video-uploader-service",
-        "changes": [
-          "Now accesses Firestore collection: channels",
-          "Now accesses Firestore collection: video-assets",
-          "New environment variables: CHANNEL_ID",
-          "Removed environment variables: SFTP_USER",
-          "New dependencies: tqdm"
-        ]
-      }
-    ]
+    "changed": []
   },
   "connections": {
-    "added": [
+    "added": [],
+    "removed": [
       {
         "source": "lds-dtp-krowten-iconik-data",
         "target": "lds-dtp-krowten-iconik-download-service",
         "type": "cloud_tasks",
         "label": "lds-dtp-krowten-iconik",
         "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
-        "description": "iconik-data now connects to iconik-download-service via Cloud Tasks"
+        "description": "iconik-data no longer connects to iconik-download-service via Cloud Tasks"
       }
-    ],
-    "removed": []
+    ]
   }
 }
