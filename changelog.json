@@ -1,40 +1,23 @@
 {
-  "date": "2026-04-10",
-  "compared_to": "2026-04-09",
-  "summary": "2 services changed, 1 removed connection",
+  "date": "2026-04-13",
+  "compared_to": "2026-04-10",
+  "summary": "1 new connection",
   "services": {
     "added": [],
     "removed": [],
-    "changed": [
-      {
-        "repo": "lds-dtp-krowten-backend",
-        "name": "backend",
-        "changes": [
-          "Now dispatches to Cloud Tasks queue: are"
-        ]
-      },
-      {
-        "repo": "lds-dtp-krowten-scheduling-service",
-        "name": "scheduling-service",
-        "changes": [
-          "Now accesses Firestore collection: channels",
-          "Now accesses Firestore collection: series",
-          "New dependencies: google-cloud-bigquery"
-        ]
-      }
-    ]
+    "changed": []
   },
   "connections": {
-    "added": [],
-    "removed": [
+    "added": [
       {
         "source": "lds-dtp-krowten-iconik-data",
         "target": "lds-dtp-krowten-iconik-download-service",
         "type": "cloud_tasks",
         "label": "lds-dtp-krowten-iconik",
         "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
-        "description": "iconik-data no longer connects to iconik-download-service via Cloud Tasks"
+        "description": "iconik-data now connects to iconik-download-service via Cloud Tasks"
       }
-    ]
+    ],
+    "removed": []
   }
 }
