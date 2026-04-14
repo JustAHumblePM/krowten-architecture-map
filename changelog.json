@@ -1,23 +1,31 @@
 {
-  "date": "2026-04-13",
-  "compared_to": "2026-04-10",
-  "summary": "1 new connection",
+  "date": "2026-04-14",
+  "compared_to": "2026-04-13",
+  "summary": "2 services changed",
   "services": {
     "added": [],
     "removed": [],
-    "changed": []
+    "changed": [
+      {
+        "repo": "lds-dtp-krowten-backend",
+        "name": "backend",
+        "changes": [
+          "New route: POST /ultralytics/yolo",
+          "New environment variables: ULTRALYTICS_API_BASE_URL",
+          "New dependencies: httpx"
+        ]
+      },
+      {
+        "repo": "lds-dtp-krowten-ultralytics",
+        "name": "ultralytics",
+        "changes": [
+          "New route: GET /health"
+        ]
+      }
+    ]
   },
   "connections": {
-    "added": [
-      {
-        "source": "lds-dtp-krowten-iconik-data",
-        "target": "lds-dtp-krowten-iconik-download-service",
-        "type": "cloud_tasks",
-        "label": "lds-dtp-krowten-iconik",
-        "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
-        "description": "iconik-data now connects to iconik-download-service via Cloud Tasks"
-      }
-    ],
+    "added": [],
     "removed": []
   }
 }

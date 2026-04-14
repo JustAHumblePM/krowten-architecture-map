@@ -69,7 +69,7 @@
           "framework": "fastapi",
           "deploy_target": "cloud-run",
           "primary_language": "python",
-          "routes_count": 61,
+          "routes_count": 62,
           "routes": [
             {
               "method": "GET",
@@ -370,6 +370,11 @@
               "method": "POST",
               "path": "/revert",
               "handler": "revert_thumbnail_selection"
+            },
+            {
+              "method": "POST",
+              "path": "/ultralytics/yolo",
+              "handler": "ultralytics_yolo_proxy"
             },
             {
               "method": "POST",
@@ -966,12 +971,17 @@
           "framework": "fastapi",
           "deploy_target": "cloud-run",
           "primary_language": "python",
-          "routes_count": 3,
+          "routes_count": 4,
           "routes": [
             {
               "method": "GET",
               "path": "/",
               "handler": "root"
+            },
+            {
+              "method": "GET",
+              "path": "/health",
+              "handler": "health"
             },
             {
               "method": "GET",
