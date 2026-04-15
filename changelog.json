@@ -1,31 +1,65 @@
 {
-  "date": "2026-04-14",
-  "compared_to": "2026-04-13",
-  "summary": "2 services changed",
+  "date": "2026-04-15",
+  "compared_to": "2026-04-14",
+  "summary": "1 service changed, 5 new connections",
   "services": {
     "added": [],
     "removed": [],
     "changed": [
       {
-        "repo": "lds-dtp-krowten-backend",
-        "name": "backend",
+        "repo": "lds-dtp-krowten-utlities",
+        "name": "utlities",
         "changes": [
-          "New route: POST /ultralytics/yolo",
-          "New environment variables: ULTRALYTICS_API_BASE_URL",
-          "New dependencies: httpx"
-        ]
-      },
-      {
-        "repo": "lds-dtp-krowten-ultralytics",
-        "name": "ultralytics",
-        "changes": [
-          "New route: GET /health"
+          "Now uses GCS bucket: lds-krowten-prod-vp",
+          "Now uses GCS bucket: lds-video-asset-storage",
+          "Now publishes to Pub/Sub topic: such"
         ]
       }
     ]
   },
   "connections": {
-    "added": [],
+    "added": [
+      {
+        "source": "lds-dtp-krowten-channel-selector-service",
+        "target": "lds-dtp-krowten-utlities",
+        "type": "gcs",
+        "label": "lds-krowten-prod-vp",
+        "data_flow": "Video files + processed assets (production)",
+        "description": "channel-selector-service and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
+      },
+      {
+        "source": "lds-dtp-krowten-frame-gen-service",
+        "target": "lds-dtp-krowten-utlities",
+        "type": "gcs",
+        "label": "lds-krowten-prod-vp",
+        "data_flow": "Video files + processed assets (production)",
+        "description": "frame-gen-service and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
+      },
+      {
+        "source": "lds-dtp-krowten-frame-gen-service",
+        "target": "lds-dtp-krowten-utlities",
+        "type": "gcs",
+        "label": "lds-video-asset-storage",
+        "data_flow": "Raw video files from Ikonik",
+        "description": "frame-gen-service and utlities now share GCS bucket resource \"lds-video-asset-storage\""
+      },
+      {
+        "source": "lds-dtp-krowten-frame-tuner",
+        "target": "lds-dtp-krowten-utlities",
+        "type": "gcs",
+        "label": "lds-video-asset-storage",
+        "data_flow": "Raw video files from Ikonik",
+        "description": "frame-tuner and utlities now share GCS bucket resource \"lds-video-asset-storage\""
+      },
+      {
+        "source": "lds-dtp-krowten-frontend",
+        "target": "lds-dtp-krowten-utlities",
+        "type": "gcs",
+        "label": "lds-krowten-prod-vp",
+        "data_flow": "Video files + processed assets (production)",
+        "description": "frontend and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
+      }
+    ],
     "removed": []
   }
 }

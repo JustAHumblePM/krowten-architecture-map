@@ -1417,8 +1417,8 @@
       {
         "data": {
           "id": "e30",
-          "source": "lds-dtp-krowten-frame-gen-service",
-          "target": "lds-dtp-krowten-frontend",
+          "source": "lds-dtp-krowten-channel-selector-service",
+          "target": "lds-dtp-krowten-utlities",
           "edge_type": "gcs",
           "label": "lds-krowten-prod-vp",
           "data_flow": "Video files + processed assets (production)",
@@ -1429,6 +1429,39 @@
         "data": {
           "id": "e31",
           "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-frontend",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e32",
+          "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e33",
+          "source": "lds-dtp-krowten-frontend",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-krowten-prod-vp",
+          "data_flow": "Video files + processed assets (production)",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e34",
+          "source": "lds-dtp-krowten-frame-gen-service",
           "target": "lds-dtp-krowten-frame-tuner",
           "edge_type": "gcs",
           "label": "lds-video-asset-storage",
@@ -1438,7 +1471,29 @@
       },
       {
         "data": {
-          "id": "e32",
+          "id": "e35",
+          "source": "lds-dtp-krowten-frame-gen-service",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-video-asset-storage",
+          "data_flow": "Raw video files from Ikonik",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e36",
+          "source": "lds-dtp-krowten-frame-tuner",
+          "target": "lds-dtp-krowten-utlities",
+          "edge_type": "gcs",
+          "label": "lds-video-asset-storage",
+          "data_flow": "Raw video files from Ikonik",
+          "colour": "#3498db"
+        }
+      },
+      {
+        "data": {
+          "id": "e37",
           "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-scheduling-service",
           "edge_type": "firestore",
@@ -1449,7 +1504,7 @@
       },
       {
         "data": {
-          "id": "e33",
+          "id": "e38",
           "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-youtube-caching",
           "edge_type": "firestore",
@@ -1460,7 +1515,7 @@
       },
       {
         "data": {
-          "id": "e34",
+          "id": "e39",
           "source": "lds-dtp-krowten-scheduling-service",
           "target": "lds-dtp-krowten-youtube-caching",
           "edge_type": "firestore",
@@ -1471,7 +1526,7 @@
       },
       {
         "data": {
-          "id": "e35",
+          "id": "e40",
           "source": "lds-dtp-krowten-scheduling-service",
           "target": "lds-dtp-krowten-youtube-caching",
           "edge_type": "firestore",
@@ -1482,7 +1537,7 @@
       },
       {
         "data": {
-          "id": "e36",
+          "id": "e41",
           "source": "lds-dtp-krowten-backend",
           "target": "lds-dtp-krowten-job-executor-service",
           "edge_type": "http",
