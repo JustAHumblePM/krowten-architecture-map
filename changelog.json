@@ -1,65 +1,50 @@
 {
-  "date": "2026-04-15",
-  "compared_to": "2026-04-14",
-  "summary": "1 service changed, 5 new connections",
+  "date": "2026-04-18",
+  "compared_to": "2026-04-15",
+  "summary": "2 services changed, 1 removed connection",
   "services": {
     "added": [],
     "removed": [],
     "changed": [
       {
-        "repo": "lds-dtp-krowten-utlities",
-        "name": "utlities",
+        "repo": "lds-dtp-krowten-frame-gen-service",
+        "name": "frame-gen-service",
         "changes": [
-          "Now uses GCS bucket: lds-krowten-prod-vp",
-          "Now uses GCS bucket: lds-video-asset-storage",
-          "Now publishes to Pub/Sub topic: such"
+          "Now accesses Firestore collection: batches",
+          "Now accesses Firestore collection: frameJobs",
+          "New environment variables: BATCH_ID, PROJECT_ID, VIDEO_ID"
+        ]
+      },
+      {
+        "repo": "lds-dtp-krowten-master-data-seed",
+        "name": "master-data-seed",
+        "changes": [
+          "Now deploys to cloud-run",
+          "New route: GET /",
+          "New route: GET /auth/token",
+          "New route: GET /health",
+          "New route: POST /master-data-seed",
+          "Removed route: POST /upload-csv",
+          "Now accesses Firestore collection: data",
+          "Now accesses Firestore collection: raw-assets",
+          "New environment variables: FIREBASE_API_KEY, FIRESTORE_COLLECTION, GCP_REGION, GOOGLE_PROJECT_ID_NUMBER, IS_LOCAL",
+          "New dependencies: firebase-admin, httpx, protobuf, pydantic, python-multipart",
+          "Added Dockerfile"
         ]
       }
     ]
   },
   "connections": {
-    "added": [
+    "added": [],
+    "removed": [
       {
-        "source": "lds-dtp-krowten-channel-selector-service",
-        "target": "lds-dtp-krowten-utlities",
-        "type": "gcs",
-        "label": "lds-krowten-prod-vp",
-        "data_flow": "Video files + processed assets (production)",
-        "description": "channel-selector-service and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
-      },
-      {
-        "source": "lds-dtp-krowten-frame-gen-service",
-        "target": "lds-dtp-krowten-utlities",
-        "type": "gcs",
-        "label": "lds-krowten-prod-vp",
-        "data_flow": "Video files + processed assets (production)",
-        "description": "frame-gen-service and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
-      },
-      {
-        "source": "lds-dtp-krowten-frame-gen-service",
-        "target": "lds-dtp-krowten-utlities",
-        "type": "gcs",
-        "label": "lds-video-asset-storage",
-        "data_flow": "Raw video files from Ikonik",
-        "description": "frame-gen-service and utlities now share GCS bucket resource \"lds-video-asset-storage\""
-      },
-      {
-        "source": "lds-dtp-krowten-frame-tuner",
-        "target": "lds-dtp-krowten-utlities",
-        "type": "gcs",
-        "label": "lds-video-asset-storage",
-        "data_flow": "Raw video files from Ikonik",
-        "description": "frame-tuner and utlities now share GCS bucket resource \"lds-video-asset-storage\""
-      },
-      {
-        "source": "lds-dtp-krowten-frontend",
-        "target": "lds-dtp-krowten-utlities",
-        "type": "gcs",
-        "label": "lds-krowten-prod-vp",
-        "data_flow": "Video files + processed assets (production)",
-        "description": "frontend and utlities now share GCS bucket resource \"lds-krowten-prod-vp\""
+        "source": "lds-dtp-krowten-iconik-data",
+        "target": "lds-dtp-krowten-iconik-download-service",
+        "type": "cloud_tasks",
+        "label": "lds-dtp-krowten-iconik",
+        "data_flow": "Asset ID \u2192 looks up asset info in Ikonik",
+        "description": "iconik-data no longer connects to iconik-download-service via Cloud Tasks"
       }
-    ],
-    "removed": []
+    ]
   }
 }
